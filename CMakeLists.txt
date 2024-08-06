@@ -1,38 +1,66 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(livox_laser_simulation)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+## Compile as C++14, supported in ROS2
+add_compile_options(-std=c++17)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  tf
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(gazebo REQUIRED)
-include_directories(${GAZEBO_INCLUDE_DIRS})
+find_package(gazebo_ros REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
-#To solve the error which gazebo does not handle the include file well, we must add this line.
-include_directories(/usr/include/gazebo-7/gazebo)
+include_directories(${GAZEBO_INCLUDE_DIRS})
+include_directories(include)
+
+# To solve the error which gazebo does not handle the include file well, we must add this line.
+include_directories(/usr/include/gazebo-11/gazebo)
 
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
-#This is designed for whose proto installed in system is not 2.6. We can install the version of proto in local dir
-#include_directories(/home/lfc/proto/include/)
-#link_directories(/home/lfc/proto/lib/)
-
-include_directories(
-         include
-        ${catkin_INCLUDE_DIRS}
+# Install launch files.
+install(DIRECTORY
+  launch
+  worlds
+  meshes
+  urdf
+  DESTINATION share/${PROJECT_NAME}/
 )
 
-catkin_package(
-        INCLUDE_DIRS include
-        LIBRARIES livox_laser_simulation
-        CATKIN_DEPENDS tf
-)
-
+# Add the library for the plugin
 add_library(livox_laser_simulation SHARED src/livox_points_plugin.cpp src/livox_ode_multiray_shape.cpp)
-target_link_libraries(livox_laser_simulation ${catkin_LIBRARIES} RayPlugin)
 
-target_link_libraries(livox_laser_simulation libprotobuf.so.9)
+# Link against the necessary libraries
+ament_target_dependencies(livox_laser_simulation 
+  rclcpp 
+  rclcpp_components 
+  tf2 
+  tf2_ros 
+  gazebo_ros
+  sensor_msgs
+)
+
+# Link against Gazebo libraries
+target_link_libraries(livox_laser_simulation ${GAZEBO_LIBRARIES})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # The following line skips the linter which checks for copyrights
+  # Comment the line when a copyright and license is added to all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  # The following line skips cpplint (only works in a git repo)
+  # Comment the line when this package is in a git repo and when
+  # a copyright and license is added to all source files
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()

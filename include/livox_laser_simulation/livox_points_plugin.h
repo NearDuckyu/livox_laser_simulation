@@ -4,10 +4,13 @@
 
 #ifndef SRC_GAZEBO_LIVOX_POINTS_PLUGIN_H
 #define SRC_GAZEBO_LIVOX_POINTS_PLUGIN_H
-#include <ros/node_handle.h>
-#include <tf/transform_broadcaster.h>
+
+#include "rclcpp/rclcpp.hpp"
+#include <memory>
+#include <tf2_ros/transform_broadcaster.h>
 #include <gazebo/plugins/RayPlugin.hh>
 #include "livox_ode_multiray_shape.h"
+#include <sensor_msgs/msg/point_cloud.hpp>
 
 namespace gazebo {
 struct AviaRotateInfo {
@@ -29,35 +32,35 @@ class LivoxPointsPlugin : public RayPlugin {
 
     ignition::math::Angle AngleMax() const;
 
-    double GetAngleResolution() const GAZEBO_DEPRECATED(7.0);
+    double GetAngleResolution() const;
 
     double AngleResolution() const;
 
-    double GetRangeMin() const GAZEBO_DEPRECATED(7.0);
+    double GetRangeMin() const;
 
     double RangeMin() const;
 
-    double GetRangeMax() const GAZEBO_DEPRECATED(7.0);
+    double GetRangeMax() const;
 
     double RangeMax() const;
 
-    double GetRangeResolution() const GAZEBO_DEPRECATED(7.0);
+    double GetRangeResolution() const;
 
     double RangeResolution() const;
 
-    int GetRayCount() const GAZEBO_DEPRECATED(7.0);
+    int GetRayCount() const;
 
     int RayCount() const;
 
-    int GetRangeCount() const GAZEBO_DEPRECATED(7.0);
+    int GetRangeCount() const;
 
     int RangeCount() const;
 
-    int GetVerticalRayCount() const GAZEBO_DEPRECATED(7.0);
+    int GetVerticalRayCount() const;
 
     int VerticalRayCount() const;
 
-    int GetVerticalRangeCount() const GAZEBO_DEPRECATED(7.0);
+    int GetVerticalRangeCount() const;
 
     int VerticalRangeCount() const;
 
@@ -65,7 +68,7 @@ class LivoxPointsPlugin : public RayPlugin {
 
     ignition::math::Angle VerticalAngleMax() const;
 
-    double GetVerticalAngleResolution() const GAZEBO_DEPRECATED(7.0);
+    double GetVerticalAngleResolution() const;
 
     double VerticalAngleResolution() const;
 
@@ -90,9 +93,9 @@ class LivoxPointsPlugin : public RayPlugin {
     gazebo::sensors::SensorPtr raySensor;
     std::vector<AviaRotateInfo> aviaInfos;
 
-    std::shared_ptr<ros::NodeHandle> rosNode;
-    ros::Publisher rosPointPub;
-    std::shared_ptr<tf::TransformBroadcaster> tfBroadcaster;
+    std::shared_ptr<rclcpp::Node> rosNode;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr rosPointPub;
+    std::shared_ptr<tf2_ros::TransformBroadcaster> tfBroadcaster;
 
     int64_t samplesStep = 0;
     int64_t currStartIndex = 0;
