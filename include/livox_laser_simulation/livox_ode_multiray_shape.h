@@ -35,6 +35,9 @@ class GZ_PHYSICS_VISIBLE LivoxOdeMultiRayShape : public MultiRayShape {
     void AddRay(const ignition::math::Vector3d &_start,
                 const ignition::math::Vector3d &_end);
 
+   
+   //  GZ_REGISTER_MODEL_PLUGIN(LivoxOdeMultiRayShape)
+
  private:
     /// \brief Ray-intersection callback.
     /// \param[in] _data Pointer to user data.

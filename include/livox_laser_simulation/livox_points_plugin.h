@@ -27,6 +27,8 @@ class LivoxPointsPlugin : public RayPlugin {
 
     void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
 
+   //  GZ_REGISTER_MODEL_PLUGIN(LivoxPointsPlugin)
+
  private:
     ignition::math::Angle AngleMin() const;
 

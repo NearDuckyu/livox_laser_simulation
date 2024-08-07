@@ -37,26 +37,9 @@ def generate_launch_description():
     )
 
     # Robot State Publisher Node
-    robot_state_publisher = Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{
-                'use_sim_time': 'true',
-                'robot_description':robot_description.toxml()
-    }])
 
     # Spawn URDF model Node
-    spawn_urdf = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        arguments=[
-            '-entity', 'livox_lidar',
-            '-topic', 'robot_description'
-        ],
-        output='screen'
-    )
+    
 
     # RViz Node
     # rviz = Node(
@@ -69,7 +52,23 @@ def generate_launch_description():
     return LaunchDescription([
         world_arg,
         gazebo_launch,
-        robot_state_publisher,
-        spawn_urdf
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'robot_description':robot_description.toxml()
+        }]),
+        Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=[
+            '-entity', 'livox_lidar',
+            '-topic', 'robot_description'
+        ],
+        output='screen'
+        )
         # rviz
     ])

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(livox_laser_simulation)
 
-## Compile as C++14, supported in ROS2
+## Compile as C++17, supported in ROS2
 add_compile_options(-std=c++17)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -10,6 +10,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(tf2 REQUIRED)
@@ -32,6 +33,7 @@ install(DIRECTORY
   worlds
   meshes
   urdf
+  scan_mode
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -40,6 +42,7 @@ add_library(livox_laser_simulation SHARED src/livox_points_plugin.cpp src/livox_
 
 # Link against the necessary libraries
 ament_target_dependencies(livox_laser_simulation 
+  ament_cmake
   rclcpp 
   rclcpp_components 
   tf2 
@@ -49,7 +52,7 @@ ament_target_dependencies(livox_laser_simulation
 )
 
 # Link against Gazebo libraries
-target_link_libraries(livox_laser_simulation ${GAZEBO_LIBRARIES})
+target_link_libraries(livox_laser_simulation RayPlugin ${GAZEBO_LIBRARIES} ${rclcpp_LIBRARIES})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

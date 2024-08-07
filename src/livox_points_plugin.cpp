@@ -36,10 +36,10 @@ void convertDataToRotateInfo(const std::vector<std::vector<double>> &datas, std:
 
 void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr sdf) {
     std::vector<std::vector<double>> datas;
-    std::string file_name = sdf->Get<std::string>("csv_file_name");
-    RCLCPP_INFO(rclcpp::get_logger("LivoxPointsPlugin"), "load csv file name: %s", file_name.c_str());
-    if (!CsvReader::ReadCsvFile(file_name, datas)) {
-        RCLCPP_INFO(rclcpp::get_logger("LivoxPointsPlugin"), "cannot get csv file! %s will return !", file_name.c_str());
+    std::string file_path = CsvReader::GetFilePath(sdf->Get<std::string>("package"), sdf->Get<std::string>("csv_file_name"));
+    RCLCPP_INFO(rclcpp::get_logger("LivoxPointsPlugin"), "load csv file name: %s", file_path.c_str());
+    if (!CsvReader::ReadCsvFile(file_path, datas)) {
+        RCLCPP_INFO(rclcpp::get_logger("LivoxPointsPlugin"), "cannot get csv file! %s will return !", file_path.c_str());
         return;
     }
     sdfPtr = sdf;
